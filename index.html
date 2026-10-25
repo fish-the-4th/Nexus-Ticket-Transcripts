@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Ticket Transcript</title>
+<style>
+  :root {
+    --bg: #313338;
+    --panel: #2b2d31;
+    --panel-2: #232428;
+    --text: #dbdee1;
+    --muted: #949ba4;
+    --link: #00a8fc;
+    --border: #3f4147;
+    --accent: #5865f2;
+    --warn: #faa61a;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); }
+  body {
+    font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px; line-height: 1.375; min-height: 100vh;
+  }
+  a { color: var(--link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  header.top { background: var(--panel); border-bottom: 1px solid var(--border); padding: 20px 16px; }
+  .wrap { max-width: 960px; margin: 0 auto; }
+  .title-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  h1 { font-size: 22px; margin: 0; font-weight: 700; }
+  .badge { background: var(--accent); color: #fff; font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px; }
+  .meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px 24px; margin-top: 16px; }
+  .meta div { min-width: 0; }
+  .meta dt { color: var(--muted); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .02em; }
+  .meta dd { margin: 2px 0 0; overflow-wrap: anywhere; }
+  .meta .id { color: var(--muted); font-size: 13px; }
+
+  main { padding: 16px 0 48px; }
+  .day { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 12px; font-weight: 600; margin: 18px 16px 6px; }
+  .day::before, .day::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+
+  .msg { display: grid; grid-template-columns: 56px 1fr; padding: 2px 16px; position: relative; }
+  .msg.first { margin-top: 14px; }
+  .msg:hover { background: rgba(2, 2, 2, .06); }
+  .avatar, .avatar-fallback { width: 40px; height: 40px; border-radius: 50%; margin-top: 2px; }
+  .avatar-fallback { background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+  .gutter-time { color: var(--muted); font-size: 11px; opacity: 0; text-align: right; padding-right: 16px; padding-top: 4px; }
+  .msg:hover .gutter-time { opacity: 1; }
+  .head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .name { font-weight: 600; }
+  .bot-tag { background: var(--accent); color: #fff; font-size: 10px; font-weight: 600; padding: 1px 5px; border-radius: 4px; text-transform: uppercase; }
+  .time { color: var(--muted); font-size: 12px; }
+  .edited { color: var(--muted); font-size: 11px; }
+  .body { overflow-wrap: anywhere; word-break: break-word; }
+  .body pre { background: var(--panel-2); border: 1px solid var(--border); border-radius: 4px; padding: 8px; margin: 6px 0; overflow-x: auto; white-space: pre-wrap; font-size: 14px; }
+  .body code { background: var(--panel-2); border-radius: 3px; padding: 1px 4px; font-size: 14px; font-family: Consolas, "Courier New", monospace; }
+  .body pre code { background: none; padding: 0; }
+  .body blockquote { margin: 4px 0; padding: 0 8px 0 12px; border-left: 4px solid #4e5058; }
+  .emoji { width: 22px; height: 22px; vertical-align: -5px; }
+
+  .attach { margin-top: 6px; }
+  .attach img { max-width: min(480px, 100%); max-height: 360px; border-radius: 6px; display: block; }
+  .file { display: inline-block; background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; margin-top: 6px; font-size: 14px; }
+  .file small { color: var(--muted); display: block; }
+
+  .embed { margin-top: 6px; max-width: 520px; background: var(--panel); border-left: 4px solid var(--border); border-radius: 4px; padding: 8px 14px 12px 12px; }
+  .embed .e-author { font-size: 14px; font-weight: 600; margin-top: 4px; }
+  .embed .e-title { font-weight: 700; margin-top: 6px; }
+  .embed .e-desc { font-size: 14px; margin-top: 4px; white-space: pre-wrap; }
+  .embed .e-field { margin-top: 8px; font-size: 14px; }
+  .embed .e-field b { display: block; }
+  .embed .e-footer { margin-top: 8px; font-size: 12px; color: var(--muted); }
+  .embed img.e-image { max-width: 100%; border-radius: 4px; margin-top: 8px; }
+
+  #status { max-width: 640px; margin: 80px auto; padding: 0 16px; text-align: center; color: var(--muted); }
+  #status h2 { color: var(--text); margin: 0 0 8px; }
+  footer { text-align: center; color: var(--muted); font-size: 12px; padding: 0 16px 32px; }
+
+  @media (max-width: 560px) {
+    .msg { grid-template-columns: 48px 1fr; padding: 2px 10px; }
+    .day { margin-left: 10px; margin-right: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="status">
+  <h2>Loading transcript…</h2>
+  <p>One moment.</p>
+</div>
+
+<div id="page" hidden>
+  <header class="top">
+    <div class="wrap">
+      <div class="title-row">
+        <h1 id="title"></h1>
+        <span class="badge" id="type"></span>
+      </div>
+      <dl class="meta" id="meta"></dl>
+    </div>
+  </header>
+  <main><div class="wrap" id="messages"></div></main>
+  <footer id="foot"></footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var statusBox = document.getElementById("status");
+  var page = document.getElementById("page");
+
+  function showStatus(title, text) {
+    page.hidden = true;
+    statusBox.hidden = false;
+    statusBox.innerHTML = "";
+    var h = document.createElement("h2"); h.textContent = title;
+    var p = document.createElement("p"); p.textContent = text;
+    statusBox.appendChild(h); statusBox.appendChild(p);
+  }
+
+  // ---- reading the link -------------------------------------------------
+  var params = new URLSearchParams(location.search);
+  var stem = params.get("t") || "";
+  var keyText = location.hash.replace(/^#/, "");
+
+  if (!/^[0-9A-Za-z-]{4,64}$/.test(stem) || !keyText) {
+    showStatus("This link isn't complete", "Open the transcript using the full link from the log channel. It has to include everything after the # as well.");
+    return;
+  }
+
+  function b64urlToBytes(text) {
+    var b64 = text.replace(/-/g, "+").replace(/_/g, "/");
+    while (b64.length % 4) b64 += "=";
+    var bin = atob(b64);
+    var out = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out;
+  }
+
+  // ---- loading + decrypting ---------------------------------------------
+  var attempts = 0;
+  var MAX_ATTEMPTS = 12;
+
+  async function load() {
+    var response;
+    try {
+      response = await fetch("transcripts/" + stem + ".bin", { cache: "no-store" });
+    } catch (e) {
+      showStatus("Couldn't load the transcript", "Check your connection and refresh the page.");
+      return;
+    }
+
+    if (response.status === 404) {
+      attempts++;
+      if (attempts <= MAX_ATTEMPTS) {
+        showStatus("Waiting for the transcript…", "GitHub can take a minute or two to publish a brand new transcript. Checking again automatically (" + attempts + "/" + MAX_ATTEMPTS + ").");
+        setTimeout(load, 10000);
+      } else {
+        showStatus("Transcript not found", "It may have been removed, or the link is wrong.");
+      }
+      return;
+    }
+    if (!response.ok) {
+      showStatus("Couldn't load the transcript", "GitHub answered with " + response.status + ".");
+      return;
+    }
+
+    var data;
+    try {
+      var buffer = new Uint8Array(await response.arrayBuffer());
+      var key = await crypto.subtle.importKey("raw", b64urlToBytes(keyText), "AES-GCM", false, ["decrypt"]);
+      var plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: buffer.slice(0, 12) }, key, buffer.slice(12));
+      data = JSON.parse(new TextDecoder().decode(plain));
+    } catch (e) {
+      showStatus("Couldn't unlock this transcript", "The link's key doesn't match. Make sure the whole link was copied, including the part after the #.");
+      return;
+    }
+
+    render(data);
+  }
+
+  // ---- helpers ----------------------------------------------------------
+  function el(tag, cls, text) {
+    var node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text !== undefined && text !== null) node.textContent = text;
+    return node;
+  }
+
+  function isHttps(url) { return typeof url === "string" && /^https:\/\//i.test(url); }
+  function isSafeImage(url) { return typeof url === "string" && (/^https:\/\//i.test(url) || /^data:image\/(png|jpeg|gif|webp);base64,/i.test(url)); }
+
+  function esc(text) {
+    return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+
+  function fmtDate(iso, withTime) {
+    if (!iso) return "—";
+    var d = new Date(iso);
+    if (isNaN(d)) return "—";
+    return withTime
+      ? d.toLocaleString([], { dateStyle: "medium", timeStyle: "short" })
+      : d.toLocaleDateString([], { dateStyle: "full" });
+  }
+  function fmtTime(iso) {
+    var d = new Date(iso);
+    return isNaN(d) ? "" : d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  }
+
+  // Discord-style text -> safe HTML. Everything is escaped first.
+  function markdown(raw) {
+    var stash = [];
+    function keep(html) { stash.push(html); return "\u0000" + (stash.length - 1) + "\u0000"; }
+
+    var text = String(raw == null ? "" : raw);
+
+    // code blocks and inline code first, so nothing inside them gets formatted
+    text = text.replace(/```(?:[A-Za-z0-9_+-]*\n)?([\s\S]*?)```/g, function (m, code) {
+      return keep("<pre><code>" + esc(code.replace(/\n$/, "")) + "</code></pre>");
+    });
+    text = text.replace(/`([^`\n]+)`/g, function (m, code) {
+      return keep("<code>" + esc(code) + "</code>");
+    });
+
+    // custom emoji <:name:123> / <a:name:123>
+    text = text.replace(/<(a?):([A-Za-z0-9_]{2,32}):(\d{15,25})>/g, function (m, anim, name, id) {
+      return keep('<img class="emoji" alt=":' + esc(name) + ':" src="https://cdn.discordapp.com/emojis/' + id + '.' + (anim ? "gif" : "webp") + '?size=48">');
+    });
+
+    // links
+    text = text.replace(/https?:\/\/[^\s<>"]+/g, function (url) {
+      var trail = "";
+      var t = url.match(/[.,!?;:)\]]+$/);
+      if (t) { trail = t[0]; url = url.slice(0, -trail.length); }
+      return keep('<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer nofollow">' + esc(url) + "</a>") + esc(trail);
+    });
+
+    text = esc(text);
+
+    text = text.replace(/\*\*([\s\S]+?)\*\*/g, "<strong>$1</strong>");
+    text = text.replace(/__([\s\S]+?)__/g, "<u>$1</u>");
+    text = text.replace(/~~([\s\S]+?)~~/g, "<s>$1</s>");
+    text = text.replace(/(^|[^\w*])\*(?!\s)([^*\n]+?)\*(?!\w)/g, "$1<em>$2</em>");
+    text = text.replace(/(^|[^\w_])_(?!\s)([^_\n]+?)_(?!\w)/g, "$1<em>$2</em>");
+
+    // quotes, then line breaks
+    text = text.replace(/(^|\n)&gt; ([^\n]*)/g, "$1<blockquote>$2</blockquote>");
+    text = text.replace(/<\/blockquote>\n/g, "</blockquote>").replace(/\n/g, "<br>");
+
+    return text.replace(/\u0000(\d+)\u0000/g, function (m, i) { return stash[Number(i)]; });
+  }
+
+  function personText(p) {
+    if (!p) return ["—", ""];
+    return [p.name, p.id];
+  }
+
+  // ---- drawing the page -------------------------------------------------
+  function render(data) {
+    var t = data.ticket || {};
+    document.title = "Ticket " + (t.id || "") + " — Transcript";
+    document.getElementById("title").textContent = "Ticket " + (t.id || "");
+    document.getElementById("type").textContent = t.type || "Ticket";
+
+    var meta = document.getElementById("meta");
+    meta.innerHTML = "";
+    function addMeta(label, value, sub) {
+      var box = el("div");
+      box.appendChild(el("dt", null, label));
+      var dd = el("dd", null, value);
+      if (sub) { dd.appendChild(el("div", "id", sub)); }
+      box.appendChild(dd);
+      meta.appendChild(box);
+    }
+    var owner = personText(t.owner), closer = personText(t.closed_by), valid = personText(t.validated_by);
+    addMeta("Ticket owner", owner[0], owner[1]);
+    addMeta("Closed by", closer[0], closer[1]);
+    addMeta("Validated by", valid[0], valid[1]);
+    addMeta("Opened", fmtDate(t.opened_at, true));
+    addMeta("Closed", fmtDate(t.closed_at, true));
+    addMeta("Messages", String((data.messages || []).length));
+
+    var list = document.getElementById("messages");
+    list.innerHTML = "";
+
+    var lastDay = "", lastAuthor = "", lastTime = 0;
+    (data.messages || []).forEach(function (m) {
+      var when = new Date(m.time);
+      var day = when.toDateString();
+      var authorId = m.author && m.author.id;
+      var newDay = day !== lastDay;
+      if (newDay) {
+        list.appendChild(el("div", "day", fmtDate(m.time, false)));
+        lastDay = day;
+      }
+      var grouped = !newDay && authorId === lastAuthor && (when - lastTime) < 7 * 60 * 1000;
+      lastAuthor = authorId; lastTime = when;
+
+      var row = el("div", "msg" + (grouped ? "" : " first"));
+      var gutter = el("div");
+      var body = el("div");
+
+      if (grouped) {
+        gutter.className = "gutter-time";
+        gutter.textContent = fmtTime(m.time);
+      } else {
+        var a = m.author || {};
+        if (isHttps(a.avatar)) {
+          var img = el("img", "avatar");
+          img.alt = ""; img.src = a.avatar; img.loading = "lazy";
+          img.addEventListener("error", function () {
+            var fb = el("div", "avatar-fallback", (a.name || "?").charAt(0).toUpperCase());
+            if (img.parentNode) img.parentNode.replaceChild(fb, img);
+          });
+          gutter.appendChild(img);
+        } else {
+          gutter.appendChild(el("div", "avatar-fallback", (a.name || "?").charAt(0).toUpperCase()));
+        }
+        var head = el("div", "head");
+        var name = el("span", "name", a.name || "Unknown");
+        if (a.color && /^#[0-9a-f]{6}$/i.test(a.color)) name.style.color = a.color;
+        head.appendChild(name);
+        if (a.bot) head.appendChild(el("span", "bot-tag", "App"));
+        head.appendChild(el("span", "time", fmtDate(m.time, true)));
+        body.appendChild(head);
+      }
+
+      if (m.content) {
+        var content = el("div", "body");
+        content.innerHTML = markdown(m.content);
+        if (m.edited) content.appendChild(el("span", "edited", " (edited)"));
+        body.appendChild(content);
+      }
+
+      (m.attachments || []).forEach(function (att) {
+        if (att.data && isSafeImage(att.data)) {
+          var box = el("div", "attach");
+          var pic = el("img");
+          pic.alt = att.name || "image"; pic.src = att.data;
+          box.appendChild(pic);
+          body.appendChild(box);
+        } else {
+          var file = el("div", "file");
+          if (isHttps(att.url)) {
+            var link = el("a", null, att.name || "file");
+            link.href = att.url; link.target = "_blank"; link.rel = "noopener noreferrer nofollow";
+            file.appendChild(link);
+          } else {
+            file.appendChild(el("span", null, att.name || "file"));
+          }
+          var kb = att.size ? Math.max(1, Math.round(att.size / 1024)) + " KB · " : "";
+          file.appendChild(el("small", null, kb + "Discord's link for this file may have expired"));
+          body.appendChild(file);
+        }
+      });
+
+      (m.embeds || []).forEach(function (e) {
+        var hasContent = e.title || e.description || (e.fields && e.fields.length) || (e.author && e.author.name);
+        if (!hasContent) return;
+        var box = el("div", "embed");
+        if (typeof e.color === "number") box.style.borderLeftColor = "#" + e.color.toString(16).padStart(6, "0");
+        if (e.author && e.author.name) box.appendChild(el("div", "e-author", e.author.name));
+        if (e.title) {
+          var title = el("div", "e-title");
+          if (isHttps(e.url)) {
+            var tl = el("a", null, e.title);
+            tl.href = e.url; tl.target = "_blank"; tl.rel = "noopener noreferrer nofollow";
+            title.appendChild(tl);
+          } else { title.textContent = e.title; }
+          box.appendChild(title);
+        }
+        if (e.description) {
+          var desc = el("div", "e-desc");
+          desc.innerHTML = markdown(e.description);
+          box.appendChild(desc);
+        }
+        (e.fields || []).forEach(function (f) {
+          var field = el("div", "e-field");
+          field.appendChild(el("b", null, f.name));
+          var v = el("span"); v.innerHTML = markdown(f.value);
+          field.appendChild(v);
+          box.appendChild(field);
+        });
+        var imgInfo = e.image || e.thumbnail;
+        var imgUrl = imgInfo && (imgInfo.proxy_url || imgInfo.url);
+        if (isHttps(imgUrl)) {
+          var ei = el("img", "e-image"); ei.alt = ""; ei.src = imgUrl; ei.loading = "lazy";
+          box.appendChild(ei);
+        }
+        if (e.footer && e.footer.text) box.appendChild(el("div", "e-footer", e.footer.text));
+        body.appendChild(box);
+      });
+
+      row.appendChild(gutter);
+      row.appendChild(body);
+      list.appendChild(row);
+    });
+
+    document.getElementById("foot").textContent =
+      (data.server ? data.server + " · " : "") + "#" + (data.channel || "ticket") +
+      " · Transcript made " + fmtDate(data.generated, true);
+
+    statusBox.hidden = true;
+    page.hidden = false;
+  }
+
+  load();
+})();
+</script>
+</body>
+</html>
